@@ -13,7 +13,7 @@ export default function Navbar({ user, onLogout }) {
     }`;
 
   return (
-    <header className='border-b border-(--border)'>
+    <header className='border-b border-(--border) mr-10'>
       <nav className='mx-auto flex max-w-3xl items-center gap-2 px-4 py-3'>
         <NavLink
           to='/'
