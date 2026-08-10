@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 
 // Layout is the frame every page shares: navbar on top, page below.
 // <Outlet /> is the slot where the matched child route renders.
@@ -9,19 +10,21 @@ import Navbar from './Navbar';
 // here rather than on one page, because a broken login affects all of them.
 export default function Layout({ user, onLogout, authError }) {
   return (
-    <div className='flex min-h-screen flex-col text-left'>
-      <Navbar user={user} onLogout={onLogout} />
-      <main className='mx-auto w-full max-w-3xl flex-1 px-4 py-8'>
-        {authError && (
-          <p
-            role='alert'
-            className='mb-6 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-500'
-          >
-            {authError}
-          </p>
-        )}
+    <div className='w-full flex min-h-screen'>
+      <Sidebar />
+      <main className='flex-1'>
+        <Navbar user={user} onLogout={onLogout} />
         <Outlet />
       </main>
     </div>
   );
 }
+
+// {authError && (
+//           <p
+//             role='alert'
+//             className='mb-6 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-500'
+//           >
+//             {authError}
+//           </p>
+//         )}

@@ -132,22 +132,12 @@ function App() {
   return (
     <Routes>
       {/* Every route below renders inside Layout (navbar + page slot). */}
-      <Route
-        element={
-          <Layout user={user} onLogout={handleLogout} authError={authError} />
-        }
-      >
-        <Route path='/' element={<HomePage />} />
-
-        {/* Public on purpose: you can reach these while logged OUT.
-            They get setUser so they can report a successful login back up. */}
+      <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
+        {/* <Route path='/' element={<HomePage />}/> */}
+        <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
+        <Route path='/folders' element={<div>This is where the folders page will be</div>}/>
         <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/signup' element={<Signup setUser={setUser} />} />
-
-        <Route path='/tasks' element={<TasksPage />} />
-        <Route path='/tasks/:id' element={<TaskDetailPage />} />
-
-        {/* Only reachable when logged in — ProtectedRoute redirects otherwise. */}
         <Route
           path='/protected'
           element={
@@ -156,9 +146,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* '*' matches anything no other route claimed. Keep it LAST. */}
-        <Route path='*' element={<NotFoundPage />} />
+        <Route path='*' element={<NotFoundPage />} /> {/* '*' matches anything no other route claimed. Keep it LAST. */}
       </Route>
     </Routes>
   );

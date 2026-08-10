@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.22.0",
+    "@mdxeditor/editor": "^4.2.0",
     "@tailwindcss/vite": "^4.3.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
     "react-router": "^7.11.0",
     "tailwindcss": "^4.3.3"
   },
