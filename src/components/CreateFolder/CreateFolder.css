@@ -1,0 +1,16 @@
+
+
+.folder {
+  background-color: white;
+  border: 1px solid grey;
+  /* border-radius: 12px; */
+  padding: 16px;
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}

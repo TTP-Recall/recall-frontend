@@ -1,6 +1,19 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function Sidebar() {
+  const navigate = useNavigate()
+  async function handleNoteCreate () {
+    const response = await fetch('http://localhost:8080/api/notes', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    })
+    const data = await response.json()
+
+    navigate(`/note/${data.id}/edit`)
+  }
   return (
     <aside
       className="inset-s-0 bottom-0 z-60 bg-sidebar border-e border-sidebar-line w-48"
@@ -26,6 +39,7 @@ function Sidebar() {
                 className="flex items-center gap-x-3.5 py-2 px-2.5 bg-sidebar-nav-active text-sm text-sidebar-nav-foreground rounded-lg hover:bg-sidebar-nav-hover focus:outline-hidden focus:bg-sidebar-nav-focus"
                 href="#"
                 to={'/'}
+                onClick={handleNoteCreate}
               >
                 <svg
                   className="size-4"
@@ -42,7 +56,7 @@ function Sidebar() {
                   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
-                All notes
+                New note
               </Link>
             </li>
 
