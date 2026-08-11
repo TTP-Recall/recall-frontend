@@ -5,6 +5,7 @@ import {
   listsPlugin,
   thematicBreakPlugin,
   markdownShortcutPlugin,
+  diffSourcePlugin,
 
   // Toolbar
   toolbarPlugin,
@@ -17,6 +18,7 @@ import {
   InsertTable,
   InsertThematicBreak,
   InsertCodeBlock,
+  DiffSourceToggleWrapper,
 
   // Code blocks
   codeBlockPlugin,
@@ -24,16 +26,52 @@ import {
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
-import './NoteEditor.css'
-import { useState } from "react";
+import "./NoteEditor.css";
+import { useEffect, useState, useRef } from "react";
+import { useParams } from "react-router";
 
 function NoteEditor() {
-  const [markdown, setMarkdown] = useState('')
+  const [markdown, setMarkdown] = useState("");
+  const editorRef = useRef(null);
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchNote = async () => {
+      const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
+        credentials: "include",
+      });
+      const data = await response.json();
+      console.log(data)
+      // const cleanMarkdown = data.content.replace(/^\\|^\\//, '');
+      setMarkdown(data.content);
+      editorRef.current?.setMarkdown(data.content);
+    };
+    fetchNote();
+  }, [id]);
+  
+  async function handleSave() {
+    const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        content: markdown,
+      }),
+    });
+
+    const data = await response.json();
+    setMarkdown(data.content);
+  }
   return (
     <section>
-      <button className="btn btn-save">Save Changes</button>
+      <button className="btn btn-save" onClick={handleSave}>
+        Save Changes
+      </button>
       <MDXEditor
         markdown=""
+        ref={editorRef}
         onChange={(value) => setMarkdown(value)}
         plugins={[
           headingsPlugin(),
@@ -41,6 +79,7 @@ function NoteEditor() {
           listsPlugin(),
           thematicBreakPlugin(),
           markdownShortcutPlugin(),
+          diffSourcePlugin({ viewMode: "rich-text" }),
 
           // Code blocks
           codeBlockPlugin({
@@ -69,6 +108,7 @@ function NoteEditor() {
                 <InsertTable />
                 <InsertThematicBreak />
                 <InsertCodeBlock />
+                <DiffSourceToggleWrapper />
               </>
             ),
           }),
