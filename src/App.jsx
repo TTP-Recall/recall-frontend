@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 
 import Layout from './components/Layout';
 import NoteEditor from './pages/NoteEditor/NoteEditor';
-import NoteView from './pages/NoteView';
+import NoteView from './pages/NoteView/NoteView';
 import TasksPage from './pages/TasksPage';
 import TaskDetailPage from './pages/TaskDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -136,7 +136,7 @@ function App() {
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
         
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
-        {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
+        <Route path='/note/:id/view' element={<NoteView />}/>
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
         <Route path='/folders' element={<div>This is where the folders page will be</div>}/>
 
