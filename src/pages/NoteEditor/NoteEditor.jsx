@@ -26,14 +26,16 @@ import {
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
+import DeleteButton from "../../components/DeleteButton/DeleteButton";
 import "./NoteEditor.css";
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 function NoteEditor() {
   const [markdown, setMarkdown] = useState("");
   const editorRef = useRef(null);
   const { id } = useParams();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -63,6 +65,14 @@ function NoteEditor() {
 
     const data = await response.json();
     setMarkdown(data.content);
+  }
+  async function handleDelete () {
+    const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    navigate('/notes')
   }
   return (
     <section>
@@ -109,6 +119,7 @@ function NoteEditor() {
                 <InsertThematicBreak />
                 <InsertCodeBlock />
                 <DiffSourceToggleWrapper />
+                <DeleteButton onDelete={handleDelete}/>
               </>
             ),
           }),
