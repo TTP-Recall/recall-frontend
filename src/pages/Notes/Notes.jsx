@@ -11,7 +11,7 @@ function Notes() {
                 credentials: 'include'
             })
             const data = await response.json()
-
+            console.log(data)
             setNotes(data)
         }
         fetchNotes()
