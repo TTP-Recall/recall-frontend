@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import FolderCard from '../components/Foldercard/foldercard';
 
 export default function HomePage() {
   return (
@@ -26,6 +27,13 @@ export default function HomePage() {
           Protected page →
         </Link>
       </div>
+      
+      <FolderCard
+  name="School"
+  category="Work"
+  noteCount={12}
+  openedAgo="2 hours ago"
+/>
     </section>
   );
 }
