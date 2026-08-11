@@ -1,0 +1,9 @@
+.btn {
+    padding: 10px;
+    border-radius: 5px;
+}
+.btn-save {
+    color: #F2F7FFFF; 
+    background: #007AFFFF; 
+    cursor: pointer;
+}
