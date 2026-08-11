@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { getMe, syncUser, logoutRequest } from './api/auth';
+import FoldersPage from './pages/folderspage';
 import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
 
@@ -140,6 +141,7 @@ function App() {
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         <Route path='/note/:id/view' element={<NoteView />}/>
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
+        <Route path='/folders' element={<FoldersPage />} />
         <Route path='/folders' element={<div>{<CreateFolder />} </div>}/>
         <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/signup' element={<Signup setUser={setUser} />} />
