@@ -14,6 +14,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { getMe, syncUser, logoutRequest } from './api/auth';
 import Notes from './pages/Notes/Notes';
+import CreateFolder from './components/CreateFolder/CreateFolder';
 
 // App does two things:
 //   1. maps every URL to a page
@@ -139,9 +140,7 @@ function App() {
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         <Route path='/note/:id/view' element={<NoteView />}/>
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
-        <Route path='/folders' element={<div>This is where the folders page will be</div>}/>
-
-
+        <Route path='/folders' element={<div>{<CreateFolder />} </div>}/>
         <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/signup' element={<Signup setUser={setUser} />} />
         <Route
