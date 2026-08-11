@@ -13,7 +13,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { getMe, syncUser, logoutRequest } from './api/auth';
+import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
+
 // App does two things:
 //   1. maps every URL to a page
 //   2. owns the ONE piece of state the whole app cares about: `user`
@@ -134,7 +136,7 @@ function App() {
     <Routes>
       {/* Every route below renders inside Layout (navbar + page slot). */}
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
-        
+        <Route path='/notes' element={<Notes />} />
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         <Route path='/note/:id/view' element={<NoteView />}/>
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
