@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router';
 import { useAuth0 } from '@auth0/auth0-react';
 
 import Layout from './components/Layout';
-import HomePage from './pages/HomePage';
+import NoteEditor from './pages/NoteEditor/NoteEditor';
+import NoteView from './pages/NoteView';
 import TasksPage from './pages/TasksPage';
 import TaskDetailPage from './pages/TaskDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -133,9 +134,13 @@ function App() {
     <Routes>
       {/* Every route below renders inside Layout (navbar + page slot). */}
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
-        {/* <Route path='/' element={<HomePage />}/> */}
+        
+        <Route path='/note/:id/edit' element={<NoteEditor />}/>
+        {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
         <Route path='/folders' element={<div>This is where the folders page will be</div>}/>
+
+
         <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/signup' element={<Signup setUser={setUser} />} />
         <Route
