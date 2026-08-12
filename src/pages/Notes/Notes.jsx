@@ -30,7 +30,7 @@ function Notes() {
                 {notes && (
                     notes.map((note) => {
                         return (
-                            <Link to={`/note/${note.id}/view`} key={note.id} className="note-link">
+                            <Link to={`/note/${note.id}/edit`} key={note.id} className="note-link">
                                 <div className="note-card">
                                     <div className="note-header">
                                         <div className="note-icon">

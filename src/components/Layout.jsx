@@ -13,7 +13,7 @@ export default function Layout({ user, onLogout, authError }) {
     <div className='w-full flex min-h-screen'>
       <Sidebar />
       <main className='flex-1'>
-        <Navbar user={user} onLogout={onLogout} />
+        {/* <Navbar user={user} onLogout={onLogout} /> */}
         <Outlet />
       </main>
     </div>
