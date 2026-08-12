@@ -1,11 +1,119 @@
+section {
+    max-width: 1400px; 
+    margin: 0 auto; 
+    width: 100%;
+}
+.content-wrapper {
+    padding: 0 2rem; 
+}
+.note-search {
+    width: 100%;
+    max-width: 600px; 
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: #374151;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px; 
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+}
+
+.note-search:focus {
+    outline: none; 
+    border-color: #9ca3af; 
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); 
+}
+
+hr {
+    border: none; 
+    border-top: 1px solid #e5e7eb; 
+    margin: 2rem 0; 
+}
+
 .note-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 250px);
-  grid-auto-rows: 250px;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, 380px);
+  gap: 1.5rem;
+}
+
+.note-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 .note-card {
     background-color: #FFF;
     height: 200px;
+    border-radius: 8px; 
+    box-shadow: 0px 1px 2px #0000001A, 0px 1px 3px #0000001A;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.note-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 4px 6px #0000001A, 0px 8px 15px #0000001A;
+}
+
+.note-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 1rem 0.5rem 1rem;
+}
+
+.note-icon {
+    background-color: #E5E5E8; 
+    padding: 0.6rem; 
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.note-title {
+    flex-grow: 1; 
+}
+
+.note-title h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.note-favorite {
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+}
+
+.note-body {
+    padding: 0 1rem;
+    flex-grow: 1; 
+}
+
+.note-body p {
+    margin: 0;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.note-tags {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem 1rem 1rem;
+    margin-top: auto;
+}
+
+.note-tag {
+    background-color: #f3f4f6;
+    color: #374151;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
 }
