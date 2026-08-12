@@ -139,7 +139,7 @@ function App() {
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
         <Route path='/notes' element={<Notes />} />
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
-        <Route path='/note/:id/view' element={<NoteView />}/>
+        {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
         <Route path='/folders' element={<FoldersPage />} />
         <Route path='/folders' element={<div>{<CreateFolder />} </div>}/>

@@ -1,0 +1,25 @@
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease;
+}
+
+.btn-save {
+  background-color: #0070f3;
+  color: white;
+}
+
+.btn-save:hover {
+  background-color: #0051a2;
+}
+
+.btn-delete {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #d9363e;
+}
