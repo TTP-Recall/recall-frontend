@@ -1,9 +1,6 @@
-import { useState } from "react";
 import "./CreateFolder.css"
 
-function CreateFolder() {
-    const [folders, setFolders] = useState([]);
-
+function CreateFolder({onCreated}) {
 
     async function createFolder() {
         try {
@@ -27,11 +24,8 @@ function CreateFolder() {
 
             const folder = await response.json()
             console.log("Created folder:", folder)
+            onCreated(folder);
 
-            setFolders((fol) => [
-                ...fol,
-                folder
-            ]);
 
       
         } catch (error) {
@@ -40,19 +34,11 @@ function CreateFolder() {
     }
 
     return (
-        <div>
-
-       
+    
         <button onClick={createFolder}>
             Create Folder
         </button>
 
-        {folders.map((folder) => (
-                <div className = "folder" key={folder.id}>
-                    {folder.name}
-                </div>
-            ))}
-         </div>
     )
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import FolderCard from "../components/Foldercard/foldercard";
 import { getFolders, deleteFolder } from "../api/folders";
+import CreateFolder from "../components/CreateFolder/CreateFolder";
 
 export default function FoldersPage() {
   const [folders, setFolders] = useState([]);
@@ -21,6 +22,20 @@ export default function FoldersPage() {
     loadFolders();
   }, []);
 
+  function handleCreated(folder) {
+    setFolders((fol) => [...fol, folder]);
+}
+
+function handleUpdated(updatedFolder) {
+    setFolders((prev) =>
+        prev.map((folder) =>
+            folder.id === updatedFolder.id
+                ? updatedFolder
+                : folder
+        )
+    );
+}
+
   async function handleDelete(id) {
     try {
       await deleteFolder(id);
@@ -36,6 +51,7 @@ export default function FoldersPage() {
   return (
     <section>
       <h1>Folders</h1>
+    
       {folders.length === 0 && <p>No folders yet — create one to get started.</p>}
       {folders.map((folder) => (
         <FolderCard
@@ -46,8 +62,13 @@ export default function FoldersPage() {
           noteCount={0}
           openedAgo="—"
           onDelete={handleDelete}
+          onUpdated={handleUpdated}
         />
+      
       ))}
+
+      <CreateFolder onCreated={handleCreated} />
+
     </section>
   );
 }
