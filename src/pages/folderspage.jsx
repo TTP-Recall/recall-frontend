@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import FolderCard from "../components/Foldercard/foldercard";
-import { getFolders } from "../api/folders";
+import { getFolders, deleteFolder } from "../api/folders";
 
 export default function FoldersPage() {
   const [folders, setFolders] = useState([]);
@@ -18,9 +18,17 @@ export default function FoldersPage() {
         setIsLoading(false);
       }
     }
-
     loadFolders();
   }, []);
+
+  async function handleDelete(id) {
+    try {
+      await deleteFolder(id);
+      setFolders((prev) => prev.filter((f) => f.id !== id));
+    } catch (err) {
+      alert(`Could not delete folder: ${err.message}`);
+    }
+  }
 
   if (isLoading) return <p>Loading folders...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -28,16 +36,16 @@ export default function FoldersPage() {
   return (
     <section>
       <h1>Folders</h1>
-
       {folders.length === 0 && <p>No folders yet — create one to get started.</p>}
-
       {folders.map((folder) => (
         <FolderCard
           key={folder.id}
+          id={folder.id}
           name={folder.name}
           category="Folder"
           noteCount={0}
           openedAgo="—"
+          onDelete={handleDelete}
         />
       ))}
     </section>

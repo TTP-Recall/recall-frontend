@@ -1,8 +1,16 @@
 import { useState } from "react";
 import "./foldercard.css";
 
-function FolderCard({ name, category, noteCount, openedAgo }) {
+function FolderCard({ id, name, category, noteCount, openedAgo, onDelete }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  function handleDelete() {
+    setMenuOpen(false);
+    const confirmed = window.confirm(`Delete "${name}"? Notes inside will not be deleted.`);
+    if (confirmed) {
+      onDelete(id);
+    }
+  }
 
   return (
     <div className="folder-card">
@@ -20,14 +28,12 @@ function FolderCard({ name, category, noteCount, openedAgo }) {
       </div>
 
       <div className="folder-actions">
-        <button onClick={() => setMenuOpen(!menuOpen)}>
-          ⋯
-        </button>
+        <button onClick={() => setMenuOpen(!menuOpen)}>⋯</button>
 
         {menuOpen && (
-          <div className="folder-menu" >
+          <div className="folder-menu">
             <button>Edit</button>
-            <button>Delete</button>
+            <button onClick={handleDelete}>Delete</button>
           </div>
         )}
       </div>
