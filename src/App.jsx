@@ -141,8 +141,17 @@ function App() {
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
         <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
-        <Route path='/folders' element={<FoldersPage />} />
-        <Route path='/folders' element={<div>{<CreateFolder />} </div>}/>
+              
+        <Route
+          path="/folders"
+          element={
+            <>
+              <FoldersPage />
+              {/* <CreateFolder /> */}
+            </>
+          }
+        />
+
         <Route path='/login' element={<Login setUser={setUser} />} />
         <Route path='/signup' element={<Signup setUser={setUser} />} />
         <Route

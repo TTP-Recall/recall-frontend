@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./foldercard.css";
+import EditButton from "../EditButton/EditButton";
 
-function FolderCard({ id, name, category, noteCount, openedAgo, onDelete }) {
+function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpdated}) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   function handleDelete() {
@@ -32,7 +33,11 @@ function FolderCard({ id, name, category, noteCount, openedAgo, onDelete }) {
 
         {menuOpen && (
           <div className="folder-menu">
-            <button>Edit</button>
+            <EditButton
+              folderId={id}
+              folderName={name}
+              onUpdated={onUpdated}
+            />
             <button onClick={handleDelete}>Delete</button>
           </div>
         )}
