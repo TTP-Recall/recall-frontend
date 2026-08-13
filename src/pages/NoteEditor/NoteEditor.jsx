@@ -87,8 +87,35 @@ function NoteEditor() {
     navigate("/notes");
   }
 
+  async function handleAiFormat() {
+    const currentContent = editorRef.current?.getMarkdown() || "";
+
+    const response = await fetch("http://localhost:8080/api/ai/format", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        markdownText: currentContent,
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data)
+    if (data?.formattedContent) {
+      // Update both the editor visually and React state
+      editorRef.current?.setMarkdown(data.formattedContent);
+      setMarkdown(data.formattedContent);
+
+      await handleSave()
+    }
+  }
+
   return (
     <section className="note-editor">
+       <button className="btn" onClick={handleAiFormat}>Polish Note</button>
+
       <div className="note-actions">
         <DeleteButton onDelete={handleDelete} />
         <Button onClick={handleSave} text="Save Changes" variant="save" />
