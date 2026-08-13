@@ -31,10 +31,19 @@ import Button from "../../components/Button/Button";
 import "./NoteEditor.css";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
+import { useReactMediaRecorder } from "react-media-recorder";
+import { LuMic } from "react-icons/lu";
+import { LuMicOff } from "react-icons/lu";
 
 function NoteEditor() {
   const [markdown, setMarkdown] = useState("");
   const [title, setTitle] = useState('Untitled')
+   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ 
+    audio: true,
+    onStop: (blobUrl, blob) => {
+      console.log("Audio file ready to send:", blob);
+    }
+  });
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -111,11 +120,21 @@ function NoteEditor() {
       await handleSave()
     }
   }
+  const handleMicClick = () => {
+    // if we click the button and we are recording - Stop recording
+    if (status === "recording") {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+};
 
   return (
     <section className="note-editor">
-       <button className="btn" onClick={handleAiFormat}>Polish Note</button>
-
+      <button onClick={handleMicClick}>
+        {status === 'recording' ? <LuMicOff size={35}/> : <LuMic size={35}/>}
+      </button>
+      <button className="btn" onClick={handleAiFormat}>Polish Note</button>
       <div className="note-actions">
         <DeleteButton onDelete={handleDelete} />
         <Button onClick={handleSave} text="Save Changes" variant="save" />
