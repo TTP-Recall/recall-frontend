@@ -25,7 +25,7 @@ function FolderCard({ name, category, noteCount, openedAgo }) {
         </button>
 
         {menuOpen && (
-          <div className="folder-menu">
+          <div className="folder-menu" >
             <button>Edit</button>
             <button>Delete</button>
           </div>
