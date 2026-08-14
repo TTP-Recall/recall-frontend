@@ -26,15 +26,20 @@ export default function FoldersPage() {
     setFolders((fol) => [...fol, folder]);
 }
 
-function handleUpdated(updatedFolder) {
-    setFolders((prev) =>
-        prev.map((folder) =>
-            folder.id === updatedFolder.id
-                ? updatedFolder
-                : folder
-        )
-    );
-}
+function handleUpdated(updatedFolder) { 
+    setFolders((prev) => { 
+      return prev.map((folder) => { 
+        if (folder.id === updatedFolder.id) { 
+        return { 
+        ...folder, 
+        name: updatedFolder.name 
+        }; 
+        } 
+      
+      return folder; 
+      }); 
+    }); 
+} 
 
   async function handleDelete(id) {
     try {
@@ -50,22 +55,37 @@ function handleUpdated(updatedFolder) {
 
   return (
     <section>
-      <h1>Folders</h1>
-    
-      {folders.length === 0 && <p>No folders yet — create one to get started.</p>}
-      {folders.map((folder) => (
-        <FolderCard
-          key={folder.id}
-          id={folder.id}
-          name={folder.name}
-          category="Folder"
-          noteCount={0}
-          openedAgo="—"
-          onDelete={handleDelete}
-          onUpdated={handleUpdated}
+          <div className="content-wrapper">
+
+        <input
+          type="text"
+          className="note-search"
+          placeholder="Find folder"
         />
-      
-      ))}
+      </div>
+
+      <hr />
+
+   {folders.length === 0 ? (
+        <div className="content-wrapper">
+          <p>No folders yet — create one to get started.</p>
+        </div>
+      ) : (
+        <div className="folder-container content-wrapper">
+          {folders.map((folder) => (
+            <FolderCard
+              key={folder.id}
+              id={folder.id}
+              name={folder.name}
+              category="Folder"
+              noteCount={0}
+              openedAgo="—"
+              onDelete={handleDelete}
+              onUpdated={handleUpdated}
+            />
+          ))}
+        </div>
+      )}
 
       <CreateFolder onCreated={handleCreated} />
 

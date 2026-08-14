@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./foldercard.css";
 import EditButton from "../EditButton/EditButton";
+import { CgFolder } from "react-icons/cg";
 
 function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpdated}) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,7 +16,9 @@ function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpda
 
   return (
     <div className="folder-card">
-      <div className="folder-icon">📁</div>
+    <div className="folder-icon">
+  <CgFolder size={25} />
+    </div>
 
       <div className="folder-info">
         <h3>{name}</h3>

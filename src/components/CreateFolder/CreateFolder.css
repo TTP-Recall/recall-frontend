@@ -1,16 +1,61 @@
+.create-folder-card {
+    width: 25%;
+    height: 200px;
+    justify-self: center;
 
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
 
-.folder {
-  background-color: white;
-  border: 1px solid grey;
-  /* border-radius: 12px; */
-  padding: 16px;
-  width: 100%;
-  max-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-  cursor: pointer;
+    box-shadow:
+        0px 1px 2px #0000001A,
+        0px 1px 3px #0000001A;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    cursor: pointer;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.create-folder-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0px 4px 6px #0000001A,
+        0px 8px 15px #0000001A;
+}
+.create-folder-icon {
+    background-color: #E5E5E8;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #374151;
+}
+
+.create-folder-text {
+    margin-top: 1rem;
+}
+
+.create-folder-text h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1a1a1a;
+}
+
+.create-folder-text p {
+    margin: 0.5rem 0 0;
+    color: #4b5563;
+    font-size: 0.9rem;
 }
