@@ -1,4 +1,5 @@
 import "./CreateFolder.css"
+import { FiPlus } from "react-icons/fi";
 
 function CreateFolder({onCreated}) {
 
@@ -34,10 +35,12 @@ function CreateFolder({onCreated}) {
     }
 
     return (
-    
-        <button onClick={createFolder}>
-            Create Folder
-        </button>
+   
+    <button className="create-folder-card" onClick={createFolder}>
+      <div className="create-folder-icon">
+        <FiPlus size={25} />
+      </div>
+    </button>
 
     )
 }
