@@ -38,15 +38,27 @@ import { LuMicOff } from "react-icons/lu";
 function NoteEditor() {
   const [markdown, setMarkdown] = useState("");
   const [title, setTitle] = useState('Untitled')
-   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ 
-    audio: true,
-    onStop: (blobUrl, blob) => {
-      console.log("Audio file ready to send:", blob);
-    }
-  });
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ 
+    audio: true,
+    onStop: async (blobUrl, blob) => {
+      const formData = new FormData();
+      formData.append("audio", blob, "recording.webm");
+
+      const response = await fetch("http://localhost:8080/api/ai/transcribe", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const transcription = await response.json();
+      editorRef.current?.setMarkdown(transcription)
+      setMarkdown(transcription)
+    }
+  });
+  
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -112,12 +124,14 @@ function NoteEditor() {
 
     const data = await response.json();
     console.log(data)
+    
     if (data?.formattedContent) {
-      // Update both the editor visually and React state
+      // Update the editor visually and React state
       editorRef.current?.setMarkdown(data.formattedContent);
-      setMarkdown(data.formattedContent);
 
-      await handleSave()
+      // TODO: Consider showing AI changes in a separate review view
+      // so the user can review and save them if desired.
+      setMarkdown(data.formattedContent);
     }
   }
   const handleMicClick = () => {
