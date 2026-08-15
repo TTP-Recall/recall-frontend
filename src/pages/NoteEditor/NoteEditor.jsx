@@ -145,17 +145,9 @@ function NoteEditor() {
 
   return (
     <section className="note-editor">
-      <button onClick={handleMicClick}>
-        {status === 'recording' ? <LuMicOff size={35}/> : <LuMic size={35}/>}
-      </button>
-      <button className="btn" onClick={handleAiFormat}>Polish Note</button>
-      <div className="note-actions">
-        <DeleteButton onDelete={handleDelete} />
-        <Button onClick={handleSave} text="Save Changes" variant="save" />
-      </div>
-
       <MDXEditor
-        markdown=""
+        placeholder="Start typing..."
+        markdown={markdown}
         ref={editorRef}
         contentEditableClassName="prose max-w-none"
         onChange={(value) => setMarkdown(value)}
@@ -166,36 +158,37 @@ function NoteEditor() {
           thematicBreakPlugin(),
           markdownShortcutPlugin(),
           diffSourcePlugin({ viewMode: "rich-text" }),
-
-          // Code blocks
-          codeBlockPlugin({
-            defaultCodeBlockLanguage: "js",
-          }),
-
+          codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
           codeMirrorPlugin({
-            codeBlockLanguages: {
-              js: "JavaScript",
-              css: "CSS",
-              jsx: "React",
-            },
+            codeBlockLanguages: { js: "JavaScript", css: "CSS", jsx: "React" },
           }),
-
-          // Clean toolbar without extra wrapper divs
           toolbarPlugin({
-            toolbarClassName: "toolbar",
+            toolbarClassName: "custom-toolbar-wrapper",
             toolbarContents: () => (
-              <>
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <ListsToggle />
-                <BlockTypeSelect />
-                <CodeToggle />
-                <CreateLink />
-                <InsertTable />
-                <InsertThematicBreak />
-                <InsertCodeBlock />
-                <DiffSourceToggleWrapper />
-              </>
+              <div className="custom-toolbar">
+                <div className="toolbar-group">
+                  <UndoRedo />
+                  <div className="toolbar-divider" />
+                  <BoldItalicUnderlineToggles />
+                  <div className="toolbar-divider" />
+                  <BlockTypeSelect />
+                  <ListsToggle />
+                  <CodeToggle />
+                  <CreateLink />
+                </div>
+
+                {/* Spacer to push right-side items to the edge */}
+                <div className="toolbar-spacer"></div>
+
+                {/* Right Side: Custom Actions matching the screenshot */}
+                <div className="toolbar-group right-actions">
+                  <span className="last-edited-text">Last edited 2m ago</span>
+                  <DeleteButton onDelete={handleDelete} />
+                  {/* <button className="cancel-btn">Cancel</button> */}
+                  <Button onClick={handleSave} text="Save Changes" variant="save" />
+                  <div className="toolbar-divider" />
+                </div>
+              </div>
             ),
           }),
         ]}
@@ -204,7 +197,7 @@ function NoteEditor() {
       <input
         type="text"
         className="note-title-input"
-        placeholder="Untitled note"
+        placeholder="Note Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
