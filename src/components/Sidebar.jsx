@@ -27,7 +27,7 @@ function Sidebar() {
           href="#"
           aria-label="Brand"
         >
-          Temp-Sidebar
+          Recall
         </a>
       </header>
 
@@ -57,6 +57,33 @@ function Sidebar() {
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
                 New note
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                className="w-full flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-sidebar-nav-foreground rounded-lg hover:bg-sidebar-nav-hover focus:outline-hidden focus:bg-sidebar-nav-focus"
+                to="/notes"
+              >
+                <svg
+                  className="size-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 4h16v16H4z" />
+                  <path d="M8 8h8" />
+                  <path d="M8 12h8" />
+                  <path d="M8 16h5" />
+                </svg>
+
+                All notes
               </Link>
             </li>
 
