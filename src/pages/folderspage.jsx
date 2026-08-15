@@ -7,6 +7,7 @@ export default function FoldersPage() {
   const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function loadFolders() {
@@ -50,6 +51,11 @@ function handleUpdated(updatedFolder) {
     }
   }
 
+  const filteredFolders = folders.filter((folder) =>
+  folder.name.toLowerCase().includes(search.toLowerCase())
+);
+
+
   if (isLoading) return <p>Loading folders...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -61,6 +67,8 @@ function handleUpdated(updatedFolder) {
           type="text"
           className="note-search"
           placeholder="Find folder"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
@@ -72,7 +80,7 @@ function handleUpdated(updatedFolder) {
         </div>
       ) : (
         <div className="folder-container content-wrapper">
-          {folders.map((folder) => (
+          {filteredFolders.map((folder) => (
             <FolderCard
               key={folder.id}
               id={folder.id}
