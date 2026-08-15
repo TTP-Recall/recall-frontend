@@ -36,8 +36,8 @@ import { LuMic } from "react-icons/lu";
 import { LuMicOff } from "react-icons/lu";
 
 function NoteEditor() {
-  const [markdown, setMarkdown] = useState("");
-  const [title, setTitle] = useState('Untitled')
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('')
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -54,8 +54,11 @@ function NoteEditor() {
       });
 
       const transcription = await response.json();
-      editorRef.current?.setMarkdown(transcription)
-      setMarkdown(transcription)
+      const currentMarkdown = editorRef.current?.getMarkdown() || "";
+      const combinedMarkdown = `${currentMarkdown}\n\n${transcription}`
+
+      editorRef.current?.setMarkdown(combinedMarkdown)
+      setMarkdown(combinedMarkdown)
     }
   });
   
@@ -68,7 +71,7 @@ function NoteEditor() {
         });
         const data = await response.json();
         const content = data?.content || "";
-        setMarkdown(content);
+        setContent(content);
         setTitle(data.title)
         editorRef.current?.setMarkdown(content);
       } catch (error) {
@@ -81,7 +84,6 @@ function NoteEditor() {
 
   async function handleSave() {
     const currentContent = editorRef.current?.getMarkdown() || "";
-
     const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
       method: "PATCH",
       headers: {
@@ -95,7 +97,7 @@ function NoteEditor() {
     });
 
     const data = await response.json();
-    setMarkdown(data.content);
+    setContent(data.content);
     setTitle(data.title)
   }
 
@@ -123,7 +125,6 @@ function NoteEditor() {
     });
 
     const data = await response.json();
-    console.log(data)
     
     if (data?.formattedContent) {
       // Update the editor visually and React state
@@ -131,7 +132,7 @@ function NoteEditor() {
 
       // TODO: Consider showing AI changes in a separate review view
       // so the user can review and save them if desired.
-      setMarkdown(data.formattedContent);
+      setContent(data.formattedContent);
     }
   }
   const handleMicClick = () => {
@@ -147,10 +148,10 @@ function NoteEditor() {
     <section className="note-editor">
       <MDXEditor
         placeholder="Start typing..."
-        markdown={markdown}
+        markdown={content}
         ref={editorRef}
         contentEditableClassName="prose max-w-none"
-        onChange={(value) => setMarkdown(value)}
+        onChange={(value) => setContent(value)}
         plugins={[
           headingsPlugin(),
           quotePlugin(),
@@ -182,11 +183,14 @@ function NoteEditor() {
 
                 {/* Right Side: Custom Actions matching the screenshot */}
                 <div className="toolbar-group right-actions">
-                  <span className="last-edited-text">Last edited 2m ago</span>
+                  <span className="last-edited-text">{}</span>
                   <DeleteButton onDelete={handleDelete} />
                   {/* <button className="cancel-btn">Cancel</button> */}
                   <Button onClick={handleSave} text="Save Changes" variant="save" />
                   <div className="toolbar-divider" />
+                  <button onClick={handleMicClick}>
+                    {status === 'recording' ? <LuMicOff size={25}/> : <LuMic size={25}/>}
+                  </button>
                 </div>
               </div>
             ),
