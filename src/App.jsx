@@ -14,6 +14,7 @@ import { getMe, syncUser, logoutRequest } from './api/auth';
 import FoldersPage from './pages/folderspage';
 import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
+import Favorites from './pages/favorites'
 import FlashcardViewer from './components/FlashcardViewer/FlashcardViewer';
 
 // App does two things:
@@ -140,8 +141,8 @@ function App() {
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         <Route path="/note/flashcards" element={<FlashcardViewer />} />     
         {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
-        <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
-
+        <Route path='/favorites' element={<Favorites/>}/>
+              
         <Route
           path="/folders"
           element={
