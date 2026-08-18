@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sparkles, WandSparkles, Layers3, Mic } from "lucide-react";
 
-function AIToolsAction({onFormat, onGenFlashcard}) {
+function AIToolsAction({onFormat, onGenFlashcard, onTranscribe}) {
   return (
     <Popover>
       <PopoverTrigger
@@ -85,6 +85,7 @@ function AIToolsAction({onFormat, onGenFlashcard}) {
           <Button
             variant="ghost"
             className="h-auto w-full justify-start px-3 py-3"
+            onClick={onTranscribe}
           >
             <Mic className="mr-3 h-5 w-5" />
 

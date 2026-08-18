@@ -37,22 +37,24 @@ import { LuMicOff } from "react-icons/lu";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import AIToolsAction from "../../components/AIToolsAction/AIToolsAction";
 import FlashcardModal from "@/components/FlashcardModal/FlashcardModal";
+import SpinnerEmpty from "@/components/Spinner/SpinnerEmpty";
 
 function NoteEditor() {
   const [content, setContent] = useState("");
-  const [title, setTitle] = useState('')
-  const [flashcards, setFlashcards] = useState(null)
+  const [title, setTitle] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [flashcards, setFlashcards] = useState(null);
   const [flashcardsOpen, setFlashcardsOpen] = useState(false);
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ 
-    audio: true,
-    onStop: async (blobUrl, blob) => {
-      await handleTranscription(blob)
-    }
-  });
-  
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({
+      audio: true,
+      onStop: async (blobUrl, blob) => {
+        await handleTranscription(blob);
+      },
+    });
 
   useEffect(() => {
     const fetchNote = async () => {
@@ -63,7 +65,7 @@ function NoteEditor() {
         const data = await response.json();
         const content = data?.content || "";
         setContent(content);
-        setTitle(data.title)
+        setTitle(data.title);
         editorRef.current?.setMarkdown(content);
       } catch (error) {
         console.error("Failed to fetch note:", error);
@@ -89,7 +91,7 @@ function NoteEditor() {
 
     const data = await response.json();
     setContent(data.content);
-    setTitle(data.title)
+    setTitle(data.title);
   }
 
   async function handleDelete() {
@@ -102,28 +104,32 @@ function NoteEditor() {
   }
 
   async function handleAiFormat() {
-    const currentContent = editorRef.current?.getMarkdown() || "";
+    setIsAiLoading(true);
 
-    const response = await fetch("http://localhost:8080/api/ai/format", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        markdownText: currentContent,
-      }),
-    });
+    try {
+      const currentContent = editorRef.current?.getMarkdown() || "";
 
-    const data = await response.json();
-    
-    if (data?.formattedContent) {
-      // Update the editor visually and React state
-      editorRef.current?.setMarkdown(data.formattedContent);
+      const response = await fetch("http://localhost:8080/api/ai/format", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          markdownText: currentContent,
+        }),
+      });
 
-      // TODO: Consider showing AI changes in a separate review view
-      // so the user can review and save them if desired.
-      setContent(data.formattedContent);
+      const data = await response.json();
+
+      if (data?.formattedContent) {
+        editorRef.current?.setMarkdown(data.formattedContent);
+        setContent(data.formattedContent);
+      }
+    } catch (error) {
+      console.error("Failed to format note:", error);
+    } finally {
+      setIsAiLoading(false);
     }
   }
   const handleMicClick = () => {
@@ -135,112 +141,142 @@ function NoteEditor() {
     }
   };
   const handleGenFlashcards = async () => {
-    const currentContent = editorRef.current?.getMarkdown() || "";
+    setIsAiLoading(true);
 
-    const response = await fetch("http://localhost:8080/api/ai/flashcards", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        markdownText: currentContent,
-      }),
-    });
+    try {
+      const currentContent = editorRef.current?.getMarkdown() || "";
+
+      const response = await fetch("http://localhost:8080/api/ai/flashcards", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          markdownText: currentContent,
+        }),
+      });
 
       const data = await response.json();
 
       const flashcards = JSON.parse(data.formattedContent);
-      setFlashcards(flashcards)
-      setFlashcardsOpen(true)
+
+      setFlashcards(flashcards);
+      setFlashcardsOpen(true);
 
       navigate("/note/flashcards", {
-        state: { flashcards: flashcards },
+        state: { flashcards },
       });
-    };
-    const handleTranscription = async (blob) => {
-      const formData = new FormData();
-      formData.append("audio", blob, "recording.webm");
-
-      const response = await fetch("http://localhost:8080/api/ai/transcribe", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      const transcription = await response.json();
-      const currentMarkdown = editorRef.current?.getMarkdown() || "";
-      const combinedMarkdown = `${currentMarkdown}\n\n${transcription}`
-
-      editorRef.current?.setMarkdown(combinedMarkdown)
-      setContent(combinedMarkdown)
+    } catch (error) {
+      console.error("Failed to generate flashcards:", error);
+    } finally {
+      setIsAiLoading(false);
     }
+  };
+  const handleTranscription = async (blob) => {
+    const formData = new FormData();
+    formData.append("audio", blob, "recording.webm");
+
+    const response = await fetch("http://localhost:8080/api/ai/transcribe", {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+
+    const transcription = await response.json();
+    const currentMarkdown = editorRef.current?.getMarkdown() || "";
+    const combinedMarkdown = `${currentMarkdown}\n\n${transcription}`;
+
+    editorRef.current?.setMarkdown(combinedMarkdown);
+    setContent(combinedMarkdown);
+  };
 
   return (
     <section className="note-editor">
-      <MDXEditor
-        placeholder="Start typing..."
-        markdown={content}
-        ref={editorRef}
-        contentEditableClassName="prose max-w-none"
-        onChange={(value) => setContent(value)}
-        plugins={[
-          headingsPlugin(),
-          quotePlugin(),
-          listsPlugin(),
-          thematicBreakPlugin(),
-          markdownShortcutPlugin(),
-          diffSourcePlugin({ viewMode: "rich-text" }),
-          codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
-          codeMirrorPlugin({
-            codeBlockLanguages: { js: "JavaScript", css: "CSS", jsx: "React" },
-          }),
-          toolbarPlugin({
-            toolbarClassName: "custom-toolbar-wrapper",
-            toolbarContents: () => (
-              <div className="custom-toolbar">
-                <div className="toolbar-group">
-                  <UndoRedo />
-                  <div className="toolbar-divider" />
-                  <BoldItalicUnderlineToggles />
-                  <div className="toolbar-divider" />
-                  <BlockTypeSelect />
-                  <ListsToggle />
-                  <CodeToggle />
-                  <CreateLink />
-                </div>
+      {isAiLoading ? (
+        <SpinnerEmpty />
+      ) : (
+        <>
+          <MDXEditor
+            placeholder="Start typing..."
+            markdown={content}
+            ref={editorRef}
+            contentEditableClassName="prose max-w-none"
+            onChange={(value) => setContent(value)}
+            plugins={[
+              headingsPlugin(),
+              quotePlugin(),
+              listsPlugin(),
+              thematicBreakPlugin(),
+              markdownShortcutPlugin(),
+              diffSourcePlugin({ viewMode: "rich-text" }),
+              codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
+              codeMirrorPlugin({
+                codeBlockLanguages: {
+                  js: "JavaScript",
+                  css: "CSS",
+                  jsx: "React",
+                },
+              }),
+              toolbarPlugin({
+                toolbarClassName: "custom-toolbar-wrapper",
+                toolbarContents: () => (
+                  <div className="custom-toolbar">
+                    <div className="toolbar-group">
+                      <UndoRedo />
+                      <div className="toolbar-divider" />
+                      <BoldItalicUnderlineToggles />
+                      <div className="toolbar-divider" />
+                      <BlockTypeSelect />
+                      <ListsToggle />
+                      <CodeToggle />
+                      <CreateLink />
+                    </div>
 
-                <div className="toolbar-spacer"></div>
+                    <div className="toolbar-spacer" />
 
-                <div className="toolbar-group right-actions">
-                  <span className="last-edited-text">{}</span>
-                  <DeleteButton onDelete={handleDelete} />
-                  <Button onClick={handleSave} text="Save Changes" variant="save" />
-                  <div className="toolbar-divider" />
-                  <button onClick={handleMicClick}>
-                    {status === 'recording' ? <LuMicOff color="green" size={25}/> : <LuMic size={25}/>}
-                  </button>
-                </div>
-              </div>
-            ),
-          }),
-        ]}
-      />
+                    <div className="toolbar-group right-actions">
+                      <span className="last-edited-text">{}</span>
 
-      <input
-        type="text"
-        className="note-title-input"
-        placeholder="Note Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+                      <DeleteButton onDelete={handleDelete} />
 
-      <AIToolsAction 
-        onFormat={handleAiFormat}
-        onGenFlashcard={handleGenFlashcards}
-      />
-      
-      {/* <FlashcardModal open={flashcardsOpen} onOpenChange={setFlashcardsOpen} deck={flashcards}/> */}
+                      <Button
+                        onClick={handleSave}
+                        text="Save Changes"
+                        variant="save"
+                      />
+
+                      <div className="toolbar-divider" />
+
+                      <button onClick={handleMicClick}>
+                        {status === "recording" ? (
+                          <LuMicOff color="green" size={25} />
+                        ) : (
+                          <LuMic size={25} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ),
+              }),
+            ]}
+          />
+
+          <input
+            type="text"
+            className="note-title-input"
+            placeholder="Note Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <AIToolsAction
+            onFormat={handleAiFormat}
+            onGenFlashcard={handleGenFlashcards}
+            onTranscribe={handleMicClick}
+          />
+        </>
+      )}
     </section>
   );
 }
