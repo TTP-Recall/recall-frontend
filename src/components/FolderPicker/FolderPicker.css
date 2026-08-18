@@ -1,0 +1,46 @@
+.folder-picker {
+  position: relative;
+  display: inline-block;
+}
+
+.folder-picker-trigger {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.folder-picker-menu {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  min-width: 160px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.folder-picker-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.folder-picker-item:hover {
+  background: #f3f3f3;
+}
+
+.folder-picker-item.active {
+  font-weight: 600;
+  background: #eef2ff;
+}
