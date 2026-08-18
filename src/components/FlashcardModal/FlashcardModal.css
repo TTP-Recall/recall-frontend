@@ -1,0 +1,38 @@
+.flashcard-modal {
+  
+}
+.flashcard-overlay {
+  z-index: 100;
+}
+
+.flashcard-modal {
+  z-index: 101;
+}
+.flashcard-modal-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem 2rem;
+}
+
+.flashcard-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.flashcard-modal-description {
+  font-size: 1rem;
+}
+
+.flashcard-modal-body {
+  min-height: 500px;
+  padding: 2rem;
+}
+
+.flashcard-viewer-wrapper {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.flashcard-viewer-wrapper > div {
+  
+}
