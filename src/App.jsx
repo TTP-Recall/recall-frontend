@@ -16,6 +16,7 @@ import { getMe, syncUser, logoutRequest } from './api/auth';
 import FoldersPage from './pages/folderspage';
 import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
+import Favorites from './pages/favorites'
 
 // App does two things:
 //   1. maps every URL to a page
@@ -140,7 +141,7 @@ function App() {
         <Route path='/notes' element={<Notes />} />
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
-        <Route path='/favorites' element={<div>This is where favorite notes will live</div>}/>
+        <Route path='/favorites' element={<Favorites/>}/>
               
         <Route
           path="/folders"
