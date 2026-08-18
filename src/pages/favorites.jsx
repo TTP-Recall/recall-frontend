@@ -50,7 +50,10 @@ function Favorites() {
                             <div className="note-header">
 
                                 <div className="note-icon">
-                                    <CgFileDocument size={25} />
+                                    <CgFileDocument
+                                        size={25}
+                                        style={{ color: "#facc15" }}
+                                    />
                                 </div>
 
                                 <div className="note-title">
