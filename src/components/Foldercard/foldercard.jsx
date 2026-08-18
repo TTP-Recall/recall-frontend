@@ -3,12 +3,35 @@ import "./foldercard.css";
 import EditButton from "../EditButton/EditButton";
 import { CgFolder } from "react-icons/cg";
 
-function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpdated}) {
+const colors = [
+  "#007aff",
+  "#10b981",
+  "#f43f5e",
+  "#8b5cf6",
+  "#f97316",
+  "#06b6d4",
+];
+
+function FolderCard({
+  id,
+  name,
+  category,
+  noteCount,
+  openedAgo,
+  onDelete,
+  onUpdated,
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const iconColor = colors[id % colors.length];
 
   function handleDelete() {
     setMenuOpen(false);
-    const confirmed = window.confirm(`Delete "${name}"? Notes inside will not be deleted.`);
+
+    const confirmed = window.confirm(
+      `Delete "${name}"? Notes inside will not be deleted.`,
+    );
+
     if (confirmed) {
       onDelete(id);
     }
@@ -16,15 +39,25 @@ function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpda
 
   return (
     <div className="folder-card">
-    <div className="folder-icon">
-  <CgFolder size={25} />
-    </div>
+      <div
+        className="folder-icon"
+        style={{
+          backgroundColor: iconColor,
+          color: "white",
+        }}
+      >
+        <CgFolder size={25} />
+      </div>
 
       <div className="folder-info">
         <h3>{name}</h3>
 
         <div className="folder-meta">
-          <span className="category-dot"></span>
+          <span
+            className="category-dot"
+            style={{ backgroundColor: iconColor }}
+          ></span>
+
           <span>{category}</span>
           <span>{noteCount} notes</span>
           <span>Opened {openedAgo}</span>
@@ -41,6 +74,7 @@ function FolderCard({ id, name, category, noteCount, openedAgo, onDelete, onUpda
               folderName={name}
               onUpdated={onUpdated}
             />
+
             <button onClick={handleDelete}>Delete</button>
           </div>
         )}
