@@ -5,8 +5,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import Layout from './components/Layout';
 import NoteEditor from './pages/NoteEditor/NoteEditor';
 import NoteView from './pages/NoteView/NoteView';
-import TasksPage from './pages/TasksPage';
-import TaskDetailPage from './pages/TaskDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedPage from './pages/ProtectedPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -17,6 +15,7 @@ import FoldersPage from './pages/folderspage';
 import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
 import Favorites from './pages/favorites'
+import FlashcardViewer from './components/FlashcardViewer/FlashcardViewer';
 
 // App does two things:
 //   1. maps every URL to a page
@@ -140,6 +139,7 @@ function App() {
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
         <Route path='/notes' element={<Notes />} />
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
+        <Route path="/note/flashcards" element={<FlashcardViewer />} />     
         {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
         <Route path='/favorites' element={<Favorites/>}/>
               

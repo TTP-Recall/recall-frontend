@@ -15,10 +15,10 @@ import {
   CodeToggle,
   ListsToggle,
   CreateLink,
-  InsertTable,
-  InsertThematicBreak,
-  InsertCodeBlock,
-  DiffSourceToggleWrapper,
+  // InsertTable,
+  // InsertThematicBreak,
+  // InsertCodeBlock,
+  // DiffSourceToggleWrapper,
 
   // Code blocks
   codeBlockPlugin,
@@ -34,31 +34,22 @@ import { useNavigate, useParams } from "react-router";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { LuMic } from "react-icons/lu";
 import { LuMicOff } from "react-icons/lu";
+import { FlashcardArray } from "react-quizlet-flashcard";
+import AIToolsAction from "../../components/AIToolsAction/AIToolsAction";
+import FlashcardModal from "@/components/FlashcardModal/FlashcardModal";
 
 function NoteEditor() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState('')
+  const [flashcards, setFlashcards] = useState(null)
+  const [flashcardsOpen, setFlashcardsOpen] = useState(false);
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
   const { status, startRecording, stopRecording, mediaBlobUrl } = useReactMediaRecorder({ 
     audio: true,
     onStop: async (blobUrl, blob) => {
-      const formData = new FormData();
-      formData.append("audio", blob, "recording.webm");
-
-      const response = await fetch("http://localhost:8080/api/ai/transcribe", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      const transcription = await response.json();
-      const currentMarkdown = editorRef.current?.getMarkdown() || "";
-      const combinedMarkdown = `${currentMarkdown}\n\n${transcription}`
-
-      editorRef.current?.setMarkdown(combinedMarkdown)
-      setMarkdown(combinedMarkdown)
+      await handleTranscription(blob)
     }
   });
   
@@ -142,7 +133,48 @@ function NoteEditor() {
     } else {
       startRecording();
     }
-};
+  };
+  const handleGenFlashcards = async () => {
+    const currentContent = editorRef.current?.getMarkdown() || "";
+
+    const response = await fetch("http://localhost:8080/api/ai/flashcards", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        markdownText: currentContent,
+      }),
+    });
+
+      const data = await response.json();
+
+      const flashcards = JSON.parse(data.formattedContent);
+      setFlashcards(flashcards)
+      setFlashcardsOpen(true)
+
+      navigate("/note/flashcards", {
+        state: { flashcards: flashcards },
+      });
+    };
+    const handleTranscription = async (blob) => {
+      const formData = new FormData();
+      formData.append("audio", blob, "recording.webm");
+
+      const response = await fetch("http://localhost:8080/api/ai/transcribe", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const transcription = await response.json();
+      const currentMarkdown = editorRef.current?.getMarkdown() || "";
+      const combinedMarkdown = `${currentMarkdown}\n\n${transcription}`
+
+      editorRef.current?.setMarkdown(combinedMarkdown)
+      setContent(combinedMarkdown)
+    }
 
   return (
     <section className="note-editor">
@@ -178,18 +210,15 @@ function NoteEditor() {
                   <CreateLink />
                 </div>
 
-                {/* Spacer to push right-side items to the edge */}
                 <div className="toolbar-spacer"></div>
 
-                {/* Right Side: Custom Actions matching the screenshot */}
                 <div className="toolbar-group right-actions">
                   <span className="last-edited-text">{}</span>
                   <DeleteButton onDelete={handleDelete} />
-                  {/* <button className="cancel-btn">Cancel</button> */}
                   <Button onClick={handleSave} text="Save Changes" variant="save" />
                   <div className="toolbar-divider" />
                   <button onClick={handleMicClick}>
-                    {status === 'recording' ? <LuMicOff size={25}/> : <LuMic size={25}/>}
+                    {status === 'recording' ? <LuMicOff color="green" size={25}/> : <LuMic size={25}/>}
                   </button>
                 </div>
               </div>
@@ -205,6 +234,13 @@ function NoteEditor() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+
+      <AIToolsAction 
+        onFormat={handleAiFormat}
+        onGenFlashcard={handleGenFlashcards}
+      />
+      
+      {/* <FlashcardModal open={flashcardsOpen} onOpenChange={setFlashcardsOpen} deck={flashcards}/> */}
     </section>
   );
 }
