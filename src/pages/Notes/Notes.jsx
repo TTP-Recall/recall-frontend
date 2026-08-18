@@ -20,6 +20,31 @@ function Notes() {
         fetchNotes()
     }, [])
 
+    async function handleFavorite(e, note) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+        const response = await fetch(
+            `http://localhost:8080/api/notes/${note.id}/favorite`,
+            {
+                method: 'PATCH',
+                credentials: 'include'
+            }
+        )
+
+        const updatedNote = await response.json()
+
+        setNotes(prevNotes =>
+            prevNotes.map(n =>
+                n.id === updatedNote.id ? updatedNote : n
+            )
+        )
+    } catch (error) {
+        console.error(error)
+    }
+}
+
     return (
         <section>
             <div className="content-wrapper">
@@ -40,7 +65,11 @@ function Notes() {
                                             <h3>{note.title ? note.title : 'Untitled'}</h3>
                                         </div>
                                         <div className="note-favorite">
-                                            <CiStar size={22} />
+                                            <CiStar
+                                                size={22}
+                                                onClick={(e) => handleFavorite(e, note)}
+                                                color={note.isFavorite ? 'gold' : 'black'}
+                                            />
                                         </div>
                                     </div>
                                     <div className="note-body">
