@@ -42,7 +42,9 @@ import {
 function AppSidebar({ user, onLogout }) {
   const [folders, setFolders] = useState([]);
   const navigate = useNavigate();
-
+  const avatarUrl = `https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent(
+    user?.email || "default-user",
+  )}`;
   useEffect(() => {
     const fetchFolders = async () => {
       try {
@@ -88,18 +90,13 @@ function AppSidebar({ user, onLogout }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              onClick={() => navigate("/notes")}
-            >
+            <SidebarMenuButton size="lg" onClick={() => navigate("/notes")}>
               <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500 text-primary-foreground">
                 R
               </div>
 
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  Recall
-                </span>
+                <span className="truncate font-semibold">Recall</span>
 
                 <span className="truncate text-xs text-muted-foreground">
                   Personal Knowledge Vault
@@ -127,9 +124,7 @@ function AppSidebar({ user, onLogout }) {
 
               {/* Notes */}
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => navigate("/notes")}
-                >
+                <SidebarMenuButton onClick={() => navigate("/notes")}>
                   <FileText />
                   <span>Notes</span>
                 </SidebarMenuButton>
@@ -137,9 +132,7 @@ function AppSidebar({ user, onLogout }) {
 
               {/* Flashcards */}
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => navigate("/note/flashcards")}
-                >
+                <SidebarMenuButton onClick={() => navigate("/note/flashcards")}>
                   <Layers />
                   <span>Flashcards</span>
                 </SidebarMenuButton>
@@ -147,23 +140,16 @@ function AppSidebar({ user, onLogout }) {
 
               {/* All Folders */}
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => navigate("/folders")}
-                >
+                <SidebarMenuButton onClick={() => navigate("/folders")}>
                   <FolderOpen />
                   <span>All Folders</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               {/* Directory */}
-              <Collapsible
-                defaultOpen
-                className="group/collapsible"
-              >
+              <Collapsible defaultOpen className="group/collapsible">
                 <SidebarMenuItem>
-                  <CollapsibleTrigger
-                    render={<SidebarMenuButton />}
-                  >
+                  <CollapsibleTrigger render={<SidebarMenuButton />}>
                     <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     <span>Directory</span>
                   </CollapsibleTrigger>
@@ -175,9 +161,7 @@ function AppSidebar({ user, onLogout }) {
                           <SidebarMenuItem key={folder.id}>
                             <SidebarMenuButton
                               onClick={() =>
-                                navigate(
-                                  `/notes/folder/${folder.id}`
-                                )
+                                navigate(`/notes/folder/${folder.id}`)
                               }
                             >
                               <Folder />
@@ -206,12 +190,12 @@ function AppSidebar({ user, onLogout }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger
-                render={<SidebarMenuButton size="lg" />}
-              >
-                <div className="flex size-8 items-center justify-center rounded-full border">
-                  <User className="size-4" />
-                </div>
+              <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
+                <img
+                  src={avatarUrl}
+                  alt={user?.name || "User"}
+                  className="size-8 rounded-full object-cover"
+                />
 
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
@@ -224,16 +208,14 @@ function AppSidebar({ user, onLogout }) {
                 </div>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                side="top"
-                align="start"
-                className="w-64"
-              >
+              <DropdownMenuContent side="top" align="start" className="w-64">
                 <DropdownMenuGroup>
                   <div className="flex items-center gap-3 p-2">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full border">
-                      <User className="size-5" />
-                    </div>
+                    <img
+                      src={avatarUrl}
+                      alt={user?.name || "User"}
+                      className="size-10 shrink-0 rounded-full object-cover"
+                    />
 
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">

@@ -44,6 +44,7 @@ function NoteEditor() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isLoadingNote, setIsLoadingNote] = useState(true);
   const [flashcards, setFlashcards] = useState(null);
   const [flashcardsOpen, setFlashcardsOpen] = useState(false);
   const [folderId, setFolderId] = useState(null);
@@ -60,18 +61,26 @@ function NoteEditor() {
 
   useEffect(() => {
     const fetchNote = async () => {
+      setIsLoadingNote(true);
+
       try {
         const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
           credentials: "include",
         });
+
         const data = await response.json();
-        const content = data?.content || "";
-        setContent(content);
+
+        const noteContent = data?.content || "";
+
+        setContent(noteContent);
         setTitle(data.title);
-        setFolderId(data.folderId || null);
-        editorRef.current?.setMarkdown(content);
+        setFolderId(data.FolderId || null);
+
+        editorRef.current?.setMarkdown(noteContent);
       } catch (error) {
         console.error("Failed to fetch note:", error);
+      } finally {
+        setIsLoadingNote(false);
       }
     };
 
@@ -220,7 +229,12 @@ function NoteEditor() {
 
   return (
     <section className="note-editor">
-      {isAiLoading ? (
+      {isLoadingNote ? (
+        <SpinnerEmpty
+          title="Loading note"
+          description="Getting your note ready..."
+        />
+      ) : isAiLoading ? (
         <SpinnerEmpty />
       ) : (
         <>
@@ -265,7 +279,10 @@ function NoteEditor() {
                     <div className="toolbar-group right-actions">
                       <span className="last-edited-text">{}</span>
 
-                      <FolderPicker onAssign={handleAssignFolder} currentFolderId={folderId}/>
+                      <FolderPicker
+                        onAssign={handleAssignFolder}
+                        currentFolderId={folderId}
+                      />
 
                       <DeleteButton onDelete={handleDelete} />
 
