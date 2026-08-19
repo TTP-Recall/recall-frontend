@@ -1,42 +1,51 @@
-import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router";
+import { useAuth0 } from "@auth0/auth0-react";
 
-import Layout from './components/Layout';
-import NoteEditor from './pages/NoteEditor/NoteEditor';
-import NoteView from './pages/NoteView/NoteView';
-import NotFoundPage from './pages/NotFoundPage';
-import ProtectedPage from './pages/ProtectedPage';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import { getMe, syncUser, logoutRequest } from './api/auth';
-import FoldersPage from './pages/folderspage';
-import Notes from './pages/Notes/Notes';
-import CreateFolder from './components/CreateFolder/CreateFolder';
-import Favorites from './pages/favorites'
-import FlashcardViewer from './components/FlashcardViewer/FlashcardViewer';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Layout from "./components/Layout";
+import NoteEditor from "./pages/NoteEditor/NoteEditor";
+import NotFoundPage from "./pages/NotFoundPage";
+import ProtectedPage from "./pages/ProtectedPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { getMe, syncUser, logoutRequest } from "./api/auth";
+import FoldersPage from "./pages/folderspage";
+import Notes from "./pages/Notes/Notes";
+import Favorites from "./pages/favorites";
+import FlashcardViewer from "./components/FlashcardViewer/FlashcardViewer";
 
-// App does two things:
-//   1. maps every URL to a page
-//   2. owns the ONE piece of state the whole app cares about: `user`
-//
-// `user` lives up here because several places need it — the Navbar shows your
-// name, ProtectedRoute decides whether to let you through, ProtectedPage shows
-// your row. It gets passed DOWN as props. Login and Signup get `setUser` so
-// they can report back up after a successful login.
+/*
+  Wraps the authenticated app layout with ProtectedRoute.
+
+  When the user is logged out, ProtectedRoute prevents Layout
+  from rendering, so the sidebar is never shown.
+*/
+function AuthenticatedLayout({ user, onLogout, authError, isLoading }) {
+  return (
+    <ProtectedRoute user={user} isLoading={isLoading}>
+      <Layout
+        user={user}
+        onLogout={onLogout}
+        authError={authError}
+      />
+    </ProtectedRoute>
+  );
+}
+
 function App() {
-  // The user row from OUR database. null = nobody is logged in.
+  // The user row from OUR database.
+  // null = nobody is logged in.
   const [user, setUser] = useState(null);
+
   // True until our own "am I logged in?" cookie check has answered.
   const [isCheckingSession, setIsCheckingSession] = useState(true);
-  // Set if the Auth0 login worked but we couldn't get the matching row from
-  // our database. Without this the app would sit on "Checking your session…"
-  // forever, waiting for a `user` that is never coming.
+
+  // Set if Auth0 login worked but we couldn't get the matching
+  // row from our database.
   const [authError, setAuthError] = useState(null);
 
-  // Auth0's hook — only for the OAuth half of the app.
+  // Auth0's hook.
   const {
     isAuthenticated: isAuth0User,
     user: auth0User,
@@ -45,35 +54,28 @@ function App() {
     logout: auth0Logout,
   } = useAuth0();
 
-  // On a page refresh, THREE things can be in flight at once, and
-  // ProtectedRoute must not redirect while any of them is still running —
-  // otherwise a logged-in user gets bounced to /login every time they hit F5:
-  //
-  //   1. our own cookie check (GET /auth/me)
-  //   2. Auth0's SDK restoring its session from scratch
-  //   3. for Auth0 users, fetching their row from OUR database
-  //
-  // The third clause is the subtle one. An Auth0 user has no cookie, so step 1
-  // finishes almost instantly with user === null. Without waiting for the sync
-  // below, there'd be a window where nothing is "loading" but nobody is logged
-  // in either — and that window is exactly when the redirect fires.
+  /*
+    Don't redirect while any authentication step is still loading.
+
+    1. Our own cookie check
+    2. Auth0 restoring its session
+    3. Syncing an Auth0 user with our database
+  */
   const isLoading =
     isCheckingSession ||
     isAuth0Loading ||
     (isAuth0User && !user && !authError);
 
-  // ---------- 1. on page load: are we already logged in? ----------
-  // Our JWT lives in an httpOnly cookie. That cookie survives a refresh, but
-  // React state does NOT — so on every load we ask the server who we are.
-  // GET /auth/me returns the user if the cookie is good, and 401s if it isn't.
-  // A 401 here is the normal "not logged in" answer, not a bug.
+  // ---------------------------------------------------------
+  // 1. On page load: check if our JWT cookie is valid
+  // ---------------------------------------------------------
   useEffect(() => {
     async function checkIfLoggedIn() {
       try {
-        const me = await getMe(); // no token argument -> the cookie is used
+        const me = await getMe();
         setUser(me);
       } catch {
-        setUser(null); // no cookie, or it expired
+        setUser(null);
       } finally {
         setIsCheckingSession(false);
       }
@@ -82,91 +84,121 @@ function App() {
     checkIfLoggedIn();
   }, []);
 
-  // ---------- 2. after an Auth0 (OAuth) login ----------
-  // Auth0 knows this person, but OUR database might not. POST /auth/auth0 runs
-  // findOrCreate on the backend, so the first social login CREATES their row
-  // and every login after that just returns it.
+  // ---------------------------------------------------------
+  // 2. After Auth0 login: sync the user with our database
+  // ---------------------------------------------------------
   useEffect(() => {
     if (!isAuth0User || !auth0User) return;
 
     async function saveAuth0User() {
       try {
-        const token = await getAccessTokenSilently(); // Auth0's access token
+        const token = await getAccessTokenSilently();
+
         const dbUser = await syncUser(token, {
-          // Auth0 gives us a nickname; fall back to the email's local part.
-          // It's only a SUGGESTION — the backend adjusts it if that username
-          // is taken or too short, and tells us what it actually used.
-          username: auth0User.nickname || auth0User.email?.split('@')[0],
+          username:
+            auth0User.nickname ||
+            auth0User.email?.split("@")[0],
         });
+
         setUser(dbUser);
         setAuthError(null);
       } catch (error) {
-        // Auth0 thinks this person is logged in, but we have no row for them,
-        // so the rest of the app can't work. Show it — a console.error here
-        // just looks like a broken app that logs you out for no reason.
         setAuthError(
-          `Signed in with Auth0, but we couldn't load your account: ${error.message}`,
+          `Signed in with Auth0, but we couldn't load your account: ${error.message}`
         );
       }
     }
 
     saveAuth0User();
-  }, [isAuth0User, auth0User, getAccessTokenSilently]);
+  }, [
+    isAuth0User,
+    auth0User,
+    getAccessTokenSilently,
+  ]);
 
-  // ---------- logging out ----------
-  // We can't delete an httpOnly cookie from JavaScript, so logging out HAS to
-  // be a request to the server. If the user came in through Auth0, we send
-  // them through Auth0's logout too.
+  // ---------------------------------------------------------
+  // 3. Logging out
+  // ---------------------------------------------------------
   async function handleLogout() {
     try {
       await logoutRequest();
     } catch (error) {
-      // Even if the request fails, still drop the user locally — staying
-      // "logged in" on screen after clicking Log out is the worse outcome.
-      console.error('Logout failed:', error.message);
+      console.error("Logout failed:", error.message);
     }
 
     setUser(null);
     setAuthError(null);
 
     if (isAuth0User) {
-      auth0Logout({ logoutParams: { returnTo: window.location.origin } });
+      auth0Logout({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      });
     }
   }
 
   return (
     <Routes>
-      {/* Every route below renders inside Layout (navbar + page slot). */}
-      <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
-        {/* <Route path='/' element={<Dashboard />} /> */}
-        <Route path='/notes' element={<Notes />} />
-        <Route path='/note/:id/edit' element={<NoteEditor />}/>
-        <Route path="/note/flashcards" element={<FlashcardViewer />} />     
-        {/* <Route path='/note/:id/view' element={<NoteView />}/> */}
-        <Route path='/favorites' element={<Favorites/>}/>
-              
+      {/* PUBLIC ROUTES: These do NOT use Layout, so no sidebar appears. */}
+
+      <Route
+        path="/login"
+        element={<Login setUser={setUser} />}
+      />
+
+      <Route
+        path="/signup"
+        element={<Signup setUser={setUser} />}
+      />
+
+      {/* AUTHENTICATED APP :Everything inside this route gets the sidebar/layout. */}
+
+      <Route
+        element={
+          <AuthenticatedLayout
+            user={user}
+            onLogout={handleLogout}
+            authError={authError}
+            isLoading={isLoading}
+          />
+        }
+      >
         <Route
-          path="/folders"
-          element={
-            <>
-              <FoldersPage />
-              {/* <CreateFolder /> */}
-            </>
-          }
+          path="/notes"
+          element={<Notes />}
         />
 
-        <Route path='/login' element={<Login setUser={setUser} />} />
-        <Route path='/signup' element={<Signup setUser={setUser} />} />
         <Route
-          path='/protected'
-          element={
-            <ProtectedRoute user={user} isLoading={isLoading}>
-              <ProtectedPage user={user} />
-            </ProtectedRoute>
-          }
+          path="/note/:id/edit"
+          element={<NoteEditor />}
         />
-        <Route path='*' element={<NotFoundPage />} /> {/* '*' matches anything no other route claimed. Keep it LAST. */}
+
+        <Route
+          path="/note/flashcards"
+          element={<FlashcardViewer />}
+        />
+
+        <Route
+          path="/favorites"
+          element={<Favorites />}
+        />
+
+        <Route
+          path="/folders"
+          element={<FoldersPage />}
+        />
+
+        <Route
+          path="/protected"
+          element={<ProtectedPage user={user} />}
+        />
       </Route>
+
+      <Route
+        path="*"
+        element={<NotFoundPage />}
+      />
     </Routes>
   );
 }

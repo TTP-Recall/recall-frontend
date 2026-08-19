@@ -122,3 +122,9 @@
 .note-title-input::placeholder {
     color: #cbd5e1;
 }
+
+.mdxeditor-toolbar,
+.custom-toolbar-wrapper,
+.custom-toolbar {
+  overflow: visible !important;
+}
