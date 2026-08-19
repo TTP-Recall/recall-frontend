@@ -46,6 +46,7 @@ function NoteEditor() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [flashcards, setFlashcards] = useState(null);
   const [flashcardsOpen, setFlashcardsOpen] = useState(false);
+  const [folderId, setFolderId] = useState(null);
   const editorRef = useRef(null);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ function NoteEditor() {
         const content = data?.content || "";
         setContent(content);
         setTitle(data.title);
+        setFolderId(data.folderId || null);
         editorRef.current?.setMarkdown(content);
       } catch (error) {
         console.error("Failed to fetch note:", error);
@@ -105,20 +107,28 @@ function NoteEditor() {
   }
 
   async function handleAssignFolder(folderId) {
-  try {
-    const response = await fetch(`http://localhost:8080/api/notes/${id}/folder`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ folderId }),
-    });
-    if (!response.ok) throw new Error("Failed to assign folder");
-    // no state update needed here — the note's folder isn't shown inline
-    // in the editor, just confirms the save worked
-  } catch (error) {
-    console.error("Failed to assign folder:", error);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/notes/${id}/folder`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ folderId }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to assign folder");
+      }
+
+      setFolderId(folderId);
+    } catch (error) {
+      console.error("Failed to assign folder:", error);
+    }
   }
-}
 
   async function handleAiFormat() {
     setIsAiLoading(true);
@@ -255,7 +265,7 @@ function NoteEditor() {
                     <div className="toolbar-group right-actions">
                       <span className="last-edited-text">{}</span>
 
-                      <FolderPicker onAssign={handleAssignFolder} />
+                      <FolderPicker onAssign={handleAssignFolder} currentFolderId={folderId}/>
 
                       <DeleteButton onDelete={handleDelete} />
 
