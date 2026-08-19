@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ChevronRight, FileText, Layers, User } from "lucide-react";
+import { ChevronRight, FileText, Layers, User, Plus, Folder } from "lucide-react";
 
 function AppSidebar({ user, onLogout }) {
   const [folders, setFolders] = useState([]);
@@ -89,6 +89,12 @@ function AppSidebar({ user, onLogout }) {
           <SidebarGroupLabel>Library</SidebarGroupLabel>
 
           <SidebarGroupContent>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => navigate("/notes/new")}>
+                <Plus />
+                <span>New Note</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenu>
               {/* Notes */}
               <SidebarMenuItem>
@@ -125,6 +131,7 @@ function AppSidebar({ user, onLogout }) {
                                 navigate(`/notes/folder/${folder.id}`)
                               }
                             >
+                                <Folder />
                               <span>{folder.name}</span>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
