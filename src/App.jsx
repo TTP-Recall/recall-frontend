@@ -16,6 +16,7 @@ import Notes from './pages/Notes/Notes';
 import CreateFolder from './components/CreateFolder/CreateFolder';
 import Favorites from './pages/favorites'
 import FlashcardViewer from './components/FlashcardViewer/FlashcardViewer';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 // App does two things:
 //   1. maps every URL to a page
@@ -137,6 +138,7 @@ function App() {
     <Routes>
       {/* Every route below renders inside Layout (navbar + page slot). */}
       <Route element={<Layout user={user} onLogout={handleLogout} authError={authError}/>}>
+        {/* <Route path='/' element={<Dashboard />} /> */}
         <Route path='/notes' element={<Notes />} />
         <Route path='/note/:id/edit' element={<NoteEditor />}/>
         <Route path="/note/flashcards" element={<FlashcardViewer />} />     

@@ -29,7 +29,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { ChevronRight, FileText, Layers, User } from "lucide-react";
+import {
+  ChevronRight,
+  FileText,
+  Layers,
+  User,
+  Plus,
+  Folder,
+} from "lucide-react";
 
 function AppSidebar({ user, onLogout }) {
   const [folders, setFolders] = useState([]);
@@ -60,6 +67,20 @@ function AppSidebar({ user, onLogout }) {
     fetchFolders();
   }, []);
 
+  async function handleNoteCreate() {
+    const response = await fetch("http://localhost:8080/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    navigate(`/note/${data.id}/edit`);
+  }
+
   return (
     <Sidebar>
       {/* Header */}
@@ -67,7 +88,7 @@ function AppSidebar({ user, onLogout }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" onClick={() => navigate("/notes")}>
-              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500 text-primary-foreground">
                 R
               </div>
 
@@ -89,6 +110,12 @@ function AppSidebar({ user, onLogout }) {
           <SidebarGroupLabel>Library</SidebarGroupLabel>
 
           <SidebarGroupContent>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleNoteCreate}>
+                <Plus />
+                <span>New Note</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenu>
               {/* Notes */}
               <SidebarMenuItem>
@@ -125,6 +152,7 @@ function AppSidebar({ user, onLogout }) {
                                 navigate(`/notes/folder/${folder.id}`)
                               }
                             >
+                              <Folder />
                               <span>{folder.name}</span>
                             </SidebarMenuButton>
                           </SidebarMenuItem>
