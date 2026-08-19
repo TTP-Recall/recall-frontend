@@ -9,15 +9,17 @@ import { Spinner } from "@/components/ui/spinner";
 
 function SpinnerEmpty() {
   return (
-    <Empty className="w-full">
-      <EmptyHeader>
+    <Empty className="min-h-[70vh] w-full">
+      <EmptyHeader className="gap-4">
         <EmptyMedia variant="icon">
-          <Spinner />
+          <Spinner className="size-8" />
         </EmptyMedia>
 
-        <EmptyTitle>Processing your request</EmptyTitle>
+        <EmptyTitle className="text-2xl font-semibold">
+          Processing your request
+        </EmptyTitle>
 
-        <EmptyDescription>
+        <EmptyDescription className="text-base">
           Please wait while we process your request.
         </EmptyDescription>
       </EmptyHeader>
@@ -25,4 +27,4 @@ function SpinnerEmpty() {
   );
 }
 
-export default SpinnerEmpty
+export default SpinnerEmpty;
