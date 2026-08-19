@@ -36,6 +36,7 @@ import {
   User,
   Plus,
   Folder,
+  FolderOpen,
 } from "lucide-react";
 
 function AppSidebar({ user, onLogout }) {
@@ -87,13 +88,18 @@ function AppSidebar({ user, onLogout }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" onClick={() => navigate("/notes")}>
+            <SidebarMenuButton
+              size="lg"
+              onClick={() => navigate("/notes")}
+            >
               <div className="flex size-8 items-center justify-center rounded-lg bg-blue-500 text-primary-foreground">
                 R
               </div>
 
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Recall</span>
+                <span className="truncate font-semibold">
+                  Recall
+                </span>
 
                 <span className="truncate text-xs text-muted-foreground">
                   Personal Knowledge Vault
@@ -110,16 +116,20 @@ function AppSidebar({ user, onLogout }) {
           <SidebarGroupLabel>Library</SidebarGroupLabel>
 
           <SidebarGroupContent>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={handleNoteCreate}>
-                <Plus />
-                <span>New Note</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
             <SidebarMenu>
+              {/* New Note */}
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleNoteCreate}>
+                  <Plus />
+                  <span>New Note</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {/* Notes */}
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/notes")}>
+                <SidebarMenuButton
+                  onClick={() => navigate("/notes")}
+                >
                   <FileText />
                   <span>Notes</span>
                 </SidebarMenuButton>
@@ -127,19 +137,35 @@ function AppSidebar({ user, onLogout }) {
 
               {/* Flashcards */}
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/note/flashcards")}>
+                <SidebarMenuButton
+                  onClick={() => navigate("/note/flashcards")}
+                >
                   <Layers />
                   <span>Flashcards</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* Folders */}
-              <Collapsible defaultOpen className="group/collapsible">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger render={<SidebarMenuButton />}>
-                    <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              {/* All Folders */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate("/folders")}
+                >
+                  <FolderOpen />
+                  <span>All Folders</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-                    <span>Folders</span>
+              {/* Directory */}
+              <Collapsible
+                defaultOpen
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger
+                    render={<SidebarMenuButton />}
+                  >
+                    <ChevronRight className="transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    <span>Directory</span>
                   </CollapsibleTrigger>
 
                   <CollapsibleContent>
@@ -149,7 +175,9 @@ function AppSidebar({ user, onLogout }) {
                           <SidebarMenuItem key={folder.id}>
                             <SidebarMenuButton
                               onClick={() =>
-                                navigate(`/notes/folder/${folder.id}`)
+                                navigate(
+                                  `/notes/folder/${folder.id}`
+                                )
                               }
                             >
                               <Folder />
@@ -178,7 +206,9 @@ function AppSidebar({ user, onLogout }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
+              <DropdownMenuTrigger
+                render={<SidebarMenuButton size="lg" />}
+              >
                 <div className="flex size-8 items-center justify-center rounded-full border">
                   <User className="size-4" />
                 </div>
@@ -194,7 +224,11 @@ function AppSidebar({ user, onLogout }) {
                 </div>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent side="top" align="start" className="w-64">
+              <DropdownMenuContent
+                side="top"
+                align="start"
+                className="w-64"
+              >
                 <DropdownMenuGroup>
                   <div className="flex items-center gap-3 p-2">
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full border">
