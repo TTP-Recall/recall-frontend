@@ -36,6 +36,7 @@ import {
   User,
   Plus,
   Folder,
+  Star,
   FolderOpen,
 } from "lucide-react";
 
@@ -134,6 +135,15 @@ function AppSidebar({ user, onLogout }) {
                   <span>Notes</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+
+               {/* Favorites */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => navigate("/favorites")}>
+                    <Star />
+                    <span>Favorites</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
 
               {/* Flashcards */}
               <SidebarMenuItem>
